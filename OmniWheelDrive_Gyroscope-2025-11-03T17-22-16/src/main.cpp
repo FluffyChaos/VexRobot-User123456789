@@ -44,7 +44,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   
-  while (LineTracker.reflectivity() < 18) {
+  while (LineTracker.reflectivity() > 5) {
     leftControl = 0;
     rightControl = maxSpeed / 4;
 
@@ -81,10 +81,15 @@ void usercontrol(void) {
     double original_heading = Gyroscope.heading(degrees);
     }
 
-    while (Controller1.ButtonR2.pressing()) {
-      RingMotor.spin(forward, maxSpeed, percent);
+    if (Controller1.ButtonR2.pressing()) {
+      RingMotor.spin(forward, maxSpeed/8, percent);
     }
-    RingMotor.stop();
+    else if (Controller1.ButtonL2.pressing()) {
+      RingMotor.spin(reverse, maxSpeed, percent);
+    }
+    else () {
+      RingMotor.stop();
+    }
 
     // The gyroscope should always keep in consideration the orientation of the robot, and change the input by the degrees rotated
     double delta = original_heading - Gyroscope.rotation(degrees);
