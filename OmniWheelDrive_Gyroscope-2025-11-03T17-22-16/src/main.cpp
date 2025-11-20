@@ -43,8 +43,9 @@ void pre_auton(void) {
 }
 
 void autonomous(void) {
-  
-  while (LineTracker.reflectivity() > 5) {
+
+  unsigned long start = millis();
+  while (LineTracker.reflectivity() > 5 && (millis() - start < 15000)) {
     leftControl = 0;
     rightControl = maxSpeed / 4;
 
