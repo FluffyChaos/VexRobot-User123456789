@@ -35,6 +35,9 @@ competition Competition;
 double leftControl = 0, rightControl = 0, leftPower = 0, rightPower = 0, spinControl = 0;
 double x = 0, y = 0;
 double ringControl = 0;
+double DistanceSensor = 0;
+double Stop_Distance = 20;
+double time_dunk = 1;
 #define PI 3.14159265358979323846
 double maxSpeed = 100;
 
@@ -82,15 +85,38 @@ void usercontrol(void) {
     }
 
     if (Controller1.ButtonR2.pressing()) {
+      Controller1.Screen.clearLine();
       Controller1.Screen.print("Hello, r");
-      RingMotor.spin(forward, maxSpeed/8, percent);
+      RingMotor.spin(forward, maxSpeed, percent);
     }
     else if (Controller1.ButtonL2.pressing()) {
+      Controller1.Screen.clearLine();
       Controller1.Screen.print("Hello, l");
       RingMotor.spin(reverse, maxSpeed, percent);
     }
+    else if (Controller1.ButtonR1.pressing()) {
+      Controller1.Screen.clearLine();
+      Controller1.Screen.print("Hello, r");
+      RingMotor.spin(forward, maxSpeed/8, percent);
+    }
+    else if (Controller1.ButtonL1.pressing()) {
+      Controller1.Screen.clearLine();
+      Controller1.Screen.print("Hello, l");
+      RingMotor.spin(reverse, maxSpeed/8, percent);
+    }
     else  {
       RingMotor.stop();
+    }
+
+    // Distance Sensor to stop the ring motor at the perfect spot
+    if (DistanceSensor.distance(cm) <= Stop_Distance) {
+      RingMotor.stop();
+    }  
+
+    // Pressing Button B will activate the ring motor for t seconds, to perfectly dunk
+    if (Controller1.ButtonB.pressing()) {
+      RingMotor.setVelocity(maxSpeed, percent);
+      RingMotor.spinFor(reverse, time_dunk, seconds);
     }
 
     // The gyroscope should always keep in consideration the orientation of the robot, and change the input by the degrees rotated
