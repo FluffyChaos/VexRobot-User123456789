@@ -37,6 +37,8 @@ double x = 0, y = 0;
 double ringControl = 0;
 #define PI 3.14159265358979323846
 double maxSpeed = 100;
+RingMotor.resetPosition();
+bool toggle = false;
 
 void pre_auton(void) {
 
@@ -76,30 +78,40 @@ void usercontrol(void) {
     if (Controller1.ButtonA.pressing()) {
       Gyroscope.calibrate();
       while(Gyroscope.isCalibrating()) {
-      task::sleep(500);
-  }
-    double original_heading = Gyroscope.heading(degrees);
+        task::sleep(500);
+      }
+      double original_heading = Gyroscope.heading(degrees);
     }
 
+    if (Controller1.ButtonB.pressing()) {
+      RingMotor.resetPosition();
+    }  
+
+    
     if (Controller1.ButtonR2.pressing()) {
       Controller1.Screen.clearLine();
       Controller1.Screen.print("Hello, r");
-      RingMotor.spin(forward, maxSpeed, percent);
+      RingMotor.spin(forward, maxSpeed/8, percent);
+      toggle = false;
     }
     else if (Controller1.ButtonL2.pressing()) {
       Controller1.Screen.clearLine();
       Controller1.Screen.print("Hello, l");
       RingMotor.spin(reverse, maxSpeed, percent);
+      toggle = false;
     }
+    // Repositioning to pickup position and dunk position
     else if (Controller1.ButtonR1.pressing()) {
-      Controller1.Screen.clearLine();
-      Controller1.Screen.print("Hello, r");
-      RingMotor.spin(forward, maxSpeed/8, percent);
+      toggle = true;
     }
     else if (Controller1.ButtonL1.pressing()) {
-      Controller1.Screen.clearLine();
-      Controller1.Screen.print("Hello, l");
-      RingMotor.spin(reverse, maxSpeed/8, percent);
+      toggle = false;
+      RingMotor.spin(forward, maxSpeed, percent);
+      wait(1, seconds);
+    }
+      // bringing ringmotor into dock
+    else if (toggle && RingMotor.position() % 3000 != 0){
+      RingMotor.spin(forward, RingMotor.position() % 3000 + 10 * (RingMotor.position()/abs(RingMotor.position()), percent);
     }
     else  {
       RingMotor.stop();
