@@ -43,8 +43,11 @@ bool toggle = false;
 // start added variables
 double distance_x = 100;
 double distance_y = 100;
+double angle = 45; // deg
+double delta_angle = 0;
 bool allignement_toggle_x = false;
 bool allignement_toggle_y = false;
+bool angle_toggle = false;
 double k = 5; // scaling factor
 // end added variables
 
@@ -130,7 +133,18 @@ void usercontrol(void) {
     if (Controller1.ButtonC.pressing()) {
       allignement_toggle_x = true;
       allignement_toggle_y = true;
+      angle_toggle = true;
     }
+
+    // fixing angle
+    if (angle_toggle) {
+      delta_angle = Gyroscope.rotation(degrees) - angle;
+      while (delta_angle != 0) {
+        NorthMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
+        SouthMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
+        EastMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);//is actually west on the robot
+        WestMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
+      }}
 
     // fixing y_position
     if (allignement_toggle_x) {
