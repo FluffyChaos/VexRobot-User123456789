@@ -43,12 +43,11 @@ bool toggle = false;
 // start added variables
 double distance_x = 100;
 double distance_y = 100;
-double angle = 45; // deg
+double angle = 0; // deg
 double delta_angle = 0;
-bool allignement_toggle_x = false;
-bool allignement_toggle_y = false;
+bool allignement_toggle = false;
 bool angle_toggle = false;
-double k = 5; // scaling factor
+double k = 2; // scaling factor
 // end added variables
 
 void pre_auton(void) {
@@ -147,22 +146,17 @@ void usercontrol(void) {
       }}
 
     // fixing y_position
-    if (allignement_toggle_x) {
+    while (allignement_toggle) {
       if (Distance.objectDistance(cm) != distance_x) {
-        NorthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)/k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
-        SouthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)/k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
+        NorthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)*k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
+        SouthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)*k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
       }
-      else {
-        allignement_toggle_x = false
-    }}
-
-    if (allignement_toggle_y) {
       if (Distance.objectDistance(cm) != distance_y) {
-        EastMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)/k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
-        WestMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)/k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
+        EastMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)*k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
+        WestMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)*k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
       }
-      else {
-        allignement_toggle_y = false
+      if (Distance.objectDistance(cm) == distance_x && Distance.objectDistance(cm) == distance_y) {
+        allignement_toggle = false
     }}
     
     // end added part
