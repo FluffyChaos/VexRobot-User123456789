@@ -130,8 +130,7 @@ void usercontrol(void) {
     // start added part
     // using two distance sensors we can let the robot autonoumsly find the correct position to dunk
     if (Controller1.ButtonC.pressing()) {
-      allignement_toggle_x = true;
-      allignement_toggle_y = true;
+      allignement_toggle = true;
       angle_toggle = true;
     }
 
@@ -145,7 +144,7 @@ void usercontrol(void) {
         WestMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
       }}
 
-    // fixing y_position
+    // fixing position
     while (allignement_toggle) {
       if (Distance.objectDistance(cm) != distance_x) {
         NorthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)*k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
