@@ -41,13 +41,14 @@ RingMotor.resetPosition();
 bool toggle = false;
 
 // start added variables
-double distance_x = 100;
-double distance_y = 100;
+double distance_x = 14.4; // re measure
+double distance_y = 13.8; // re measure
+// ps in competition we should measure these distances again since the playing field might be different
 double angle = 0; // deg
 double delta_angle = 0;
 bool allignement_toggle = false;
 bool angle_toggle = false;
-double k = 2; // scaling factor
+double k = 1/3; // scaling factor
 // end added variables
 
 void pre_auton(void) {
@@ -129,7 +130,7 @@ void usercontrol(void) {
 
     // start added part
     // using two distance sensors we can let the robot autonoumsly find the correct position to dunk
-    if (Controller1.ButtonC.pressing()) {
+    if (Controller1.ButtonX.pressing()) {
       allignement_toggle = true;
       angle_toggle = true;
     }
@@ -137,26 +138,55 @@ void usercontrol(void) {
     // fixing angle
     if (angle_toggle) {
       delta_angle = Gyroscope.rotation(degrees) - angle;
-      while (delta_angle != 0) {
-        NorthMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
+      if (delta_angle > 180) delta_angle -= 360;
+      if (delta_angle < -180) delta_angle += 360;
+      while (delta_angle >= 1) {
+        NorthMotor.spin(forward, -delta_angle - 10 * ((delta_angle)/(abs(delta_angle))), percent);
         SouthMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
-        EastMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);//is actually west on the robot
+        EastMotor.spin(forward, -delta_angle - 10 * ((delta_angle)/(abs(delta_angle))), percent);//is actually west on the robot
         WestMotor.spin(forward, delta_angle + 10 * ((delta_angle)/(abs(delta_angle))), percent);
-      }}
+        wait(20, msec);
+        delta_angle = Gyroscope.rotation(degrees) - angle;
+        if (delta_angle > 180) delta_angle -= 360;
+        if (delta_angle < -180) delta_angle += 360;
+      }
+      NorthMotor.stop();
+      SouthMotor.stop();
+      EastMotor.stop();
+      WestMotor.stop();
+
+      angle_toggle = false;
+      }
 
     // fixing position
     while (allignement_toggle) {
-      if (Distance.objectDistance(cm) != distance_x) {
-        NorthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)*k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
-        SouthMotor.spin(forward, (Distance_x.objectDistance(cm) - distance_x)*k + 10 * (((Distance_x.objectDistance(cm)) - distance_x)/(abs(Distance_x.objectDistance(cm) - distance_x))), percent);
+      delta_x = Distance_x.objectDistance(inches) - distance_x;
+      delta_y = Distance_y.objectDistance(inches) - distance_y;
+      if (fabs(delta_x) >= 0.3) {
+        NorthMotor.spin(forward, -(delta_x)*k - 5 * ((delta_x)/(abs(delta_x))), percent);
+        SouthMotor.spin(forward, -(delta_x)*k - 5 * ((delta_x)/(abs(delta_x))), percent);
       }
-      if (Distance.objectDistance(cm) != distance_y) {
-        EastMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)*k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
-        WestMotor.spin(forward, (Distance_y.objectDistance(cm) - distance_y)*k + 10 * (((Distance_y.objectDistance(cm)) - distance_y)/(abs(Distance_y.objectDistance(cm)) - distance_y)), percent);
+      else {
+        NorthMotor.stop();
+        SouthMotor.stop();
       }
-      if (Distance.objectDistance(cm) == distance_x && Distance.objectDistance(cm) == distance_y) {
-        allignement_toggle = false
-    }}
+      if (fabs(delta_y) >= 0.3) {
+        EastMotor.spin(forward, -(delta_y)*k - 5 * ((delta_y)/(abs(delta_y))), percent);
+        WestMotor.spin(forward, -(delta_y)*k - 5 * ((delta_y)/(abs(delta_y))), percent);
+      } 
+      else {
+        EastMotor.stop();
+        WestMotor.stop();
+      }
+      if (fabs(delta_x) < 0.3 && fabs(delta_y) < 0.3) {
+        NorthMotor.stop();
+        SouthMotor.stop();
+        EastMotor.stop();
+        WestMotor.stop();
+        allignement_toggle = false;
+      }
+     wait(20, msec);
+    }
     
     // end added part
 
