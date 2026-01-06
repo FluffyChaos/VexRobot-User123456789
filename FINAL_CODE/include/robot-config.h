@@ -11,6 +11,11 @@ extern motor WestMotor;
 extern inertial Gyroscope;
 extern motor RingMotor;
 extern line LineTracker;
+extern distance Distance_x;
+extern distance Distance_y;
+extern motor Ramp1;
+extern motor Ramp2;
+extern motor RampTurn;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
