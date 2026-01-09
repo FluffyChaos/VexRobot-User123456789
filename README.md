@@ -1,0 +1,1 @@
+This is just a random repository to share code with each other you are welcome to steal and abuse our code as much as you like. (If you cant do it better yourself which should be the case when you are a human with at least 50% brain capacity)
