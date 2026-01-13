@@ -73,7 +73,7 @@ RingMotor.stop();
       delta_angle = Gyroscope.rotation(degrees) - angle_end;
       if (delta_angle > 180) delta_angle -= 360;
       if (delta_angle < -180) delta_angle += 360;
-      while (abs(delta_angle) >= 1) {
+      while (abs(delta_angle) >= 1 && !Controller1.ButtonY.pressing()) {
         NorthMotor.spin(forward, delta_angle/2 + 10 * ((delta_angle)/(abs(delta_angle))), percent);
         SouthMotor.spin(forward, -delta_angle/2 - 10 * ((delta_angle)/(abs(delta_angle))), percent);
         EastMotor.spin(forward, -delta_angle/2 - 10 * ((delta_angle)/(abs(delta_angle))), percent);//is actually west on the robot
@@ -118,7 +118,7 @@ RingMotor.stop();
         EastMotor.stop();
         WestMotor.stop();
       }
-      if (fabs(delta_x) < 0.2 && fabs(delta_y) < 0.2) {
+      if ((fabs(delta_x) < 0.2 && fabs(delta_y) < 0.2) || Controller1.ButtonY.pressing()) {
         NorthMotor.stop();
         SouthMotor.stop();
         EastMotor.stop();
